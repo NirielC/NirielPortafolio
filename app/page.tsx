@@ -492,11 +492,11 @@ export default function Home() {
                   className="photo-frame absolute inset-0 -rotate-3 overflow-hidden border bg-[var(--surface)] shadow-2xl transition-transform duration-700 hover:-rotate-1"
                   style={{ borderColor: "var(--border)" }}
                 >
-                  {/* REEMPLAZAR POSTERIORMENTE POR TU FOTO */}
+                  {/* Foto de perfil */}
 
                   <div className="relative h-full w-full bg-[var(--surface)]">
                     <img
-                      src="/profile.png"
+                      src="/profile.jpg"
                       alt="Elías Niriel"
                       className="h-full w-full object-cover"
                     />
