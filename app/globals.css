@@ -19,6 +19,12 @@
   --accent-hover: #162a4d;
   --accent-soft: #e8edf6;
   --on-accent: #ffffff;
+  --gold: #c9a227;
+  --gold-soft: #fbf3dc;
+  --gold-text: #8a6a10;
+  --side-bg: #1f3864;
+  --side-muted: #b8c4da;
+  --hero-glow: rgba(31, 56, 100, 0.08);
 }
 
 .theme-dark {
@@ -33,6 +39,12 @@
   --accent-hover: #a9c3eb;
   --accent-soft: #1b2535;
   --on-accent: #0f1216;
+  --gold: #d9b85c;
+  --gold-soft: #2a2414;
+  --gold-text: #e3c672;
+  --side-bg: #131c2c;
+  --side-muted: #9aa8c0;
+  --hero-glow: rgba(143, 176, 227, 0.08);
 }
 
 * {
@@ -66,6 +78,42 @@ a,
 button {
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
+}
+
+/* ==========================================================
+   MENÚ LATERAL, HERO, TARJETAS Y CONTACTO
+========================================================== */
+
+.sidebar {
+  background: var(--side-bg);
+}
+
+/* Fondo suave del inicio: un degradado azul en la esquina
+   y una cuadrícula de puntos muy tenue */
+.hero-bg {
+  background:
+    radial-gradient(circle at 85% 15%, var(--hero-glow), transparent 45%),
+    radial-gradient(circle, var(--border) 1px, transparent 1px);
+  background-size: auto, 22px 22px;
+}
+
+/* Franja de color en la parte superior de cada proyecto */
+.project-card::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 3px;
+  background: var(--accent);
+}
+
+.project-card.is-winner::before {
+  background: linear-gradient(90deg, var(--accent), var(--gold));
+}
+
+.contact-band {
+  background:
+    radial-gradient(circle at 90% 10%, rgba(201, 162, 39, 0.25), transparent 40%),
+    linear-gradient(135deg, #1f3864, #142645);
 }
 
 /* ==========================================================

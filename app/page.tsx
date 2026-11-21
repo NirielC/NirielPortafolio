@@ -13,21 +13,54 @@ const EMAIL = "elsnirielc@gmail.com";
 const GITHUB_URL = "https://github.com/NirielC";
 const LINKEDIN_URL = "https://www.linkedin.com/in/eniriel";
 
-const menu = [
-  { name: "Inicio", href: "#inicio" },
-  { name: "Sobre mí", href: "#sobre-mi" },
-  { name: "Experiencia", href: "#experiencia" },
-  { name: "Proyectos", href: "#proyectos" },
-  { name: "Habilidades", href: "#habilidades" },
-  { name: "Educación", href: "#educacion" },
-  { name: "CV", href: "#cv" },
-  { name: "Contacto", href: "#contacto" },
-];
+/* Iconos SVG simples (trazos de 24x24) para no depender de librerías */
+const icons = {
+  home: "M3 10.5 12 3l9 7.5V21h-6v-6H9v6H3z",
+  user: "M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zm-8 9a8 8 0 0 1 16 0",
+  briefcase: "M3 7h18v13H3zM8 7V4h8v3M3 13h18",
+  folder: "M3 6h7l2 2h9v12H3z",
+  code: "M8 8l-5 4 5 4M16 8l5 4-5 4M14 4l-4 16",
+  school: "M2 9l10-5 10 5-10 5zM6 11v5c3 2 9 2 12 0v-5",
+  file: "M6 2h9l5 5v15H6zM14 2v6h6M9 13h7M9 17h7",
+  mail: "M3 5h18v14H3zM3 6l9 7 9-7",
+  github:
+    "M9 19c-4 1.5-4-2-6-2.5M15 21v-3.5c0-1 .1-1.4-.5-2 2.8-.3 5.5-1.4 5.5-6a4.6 4.6 0 0 0-1.3-3.2 4.2 4.2 0 0 0-.1-3.2s-1.1-.3-3.5 1.3a12 12 0 0 0-6.2 0C6.5 2.8 5.4 3.1 5.4 3.1a4.2 4.2 0 0 0-.1 3.2A4.6 4.6 0 0 0 4 9.5c0 4.6 2.7 5.7 5.5 6-.6.6-.6 1.2-.5 2V21",
+  linkedin: "M4 3h16a1 1 0 0 1 1 1v16a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1zM8 10v7M8 7v.01M12 17v-7M12 13.5a3 3 0 0 1 6 0V17",
+  trophy: "M8 4h8v5a4 4 0 0 1-8 0zM8 6H4c0 3 1.5 4.5 4 4.5M16 6h4c0 3-1.5 4.5-4 4.5M12 13v4M8 21h8M9 17h6v4H9z",
+  arrow: "M5 12h14M13 6l6 6-6 6",
+  panel: "M3 4h18v16H3zM9 4v16",
+  sun: "M12 7a5 5 0 1 0 0 10 5 5 0 0 0 0-10zM12 1v2M12 21v2M4.2 4.2l1.4 1.4M18.4 18.4l1.4 1.4M1 12h2M21 12h2M4.2 19.8l1.4-1.4M18.4 5.6l1.4-1.4",
+  moon: "M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z",
+};
 
-const highlights = [
-  { value: "2", label: "Proyectos ganadores en 2026" },
-  { value: "5", label: "Proyectos desarrollados" },
-  { value: "1", label: "Experiencia laboral" },
+type IconName = keyof typeof icons;
+
+function Icon({ name, className = "h-4 w-4" }: { name: IconName; className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={1.8}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+      aria-hidden="true"
+    >
+      <path d={icons[name]} />
+    </svg>
+  );
+}
+
+const menu: { name: string; href: string; icon: IconName }[] = [
+  { name: "Inicio", href: "#inicio", icon: "home" },
+  { name: "Sobre mí", href: "#sobre-mi", icon: "user" },
+  { name: "Experiencia", href: "#experiencia", icon: "briefcase" },
+  { name: "Proyectos", href: "#proyectos", icon: "folder" },
+  { name: "Habilidades", href: "#habilidades", icon: "code" },
+  { name: "Educación", href: "#educacion", icon: "school" },
+  { name: "CV", href: "#cv", icon: "file" },
+  { name: "Contacto", href: "#contacto", icon: "mail" },
 ];
 
 const achievements = [
@@ -217,7 +250,10 @@ function SectionHeader({
 }) {
   return (
     <div className="mb-12 max-w-3xl">
-      <p className="section-label">{label}</p>
+      <p className="section-label flex items-center gap-3">
+        <span className="h-0.5 w-8 rounded-full bg-[var(--gold)]" />
+        {label}
+      </p>
       <h2 className="mt-3 text-3xl font-semibold tracking-tight md:text-4xl">
         {title}
       </h2>
@@ -257,6 +293,8 @@ export default function Home() {
     () => false
   );
   const [menuOpen, setMenuOpen] = useState(false);
+  // Menú lateral de escritorio: abierto (con textos) o cerrado (solo iconos)
+  const [collapsed, setCollapsed] = useState(false);
 
   // El fondo del <body> también cambia con el tema, así no se ven
   // franjas de otro color al hacer scroll en los bordes.
@@ -273,7 +311,7 @@ export default function Home() {
     <main
       className={`${
         darkMode ? "theme-dark" : "theme-light"
-      } min-h-screen overflow-x-hidden bg-[var(--bg)] text-[var(--text)] transition-colors duration-300`}
+      } min-h-screen overflow-x-clip bg-[var(--bg)] text-[var(--text)] transition-colors duration-300`}
     >
       {/* ===================== HEADER MÓVIL ===================== */}
 
@@ -337,31 +375,52 @@ export default function Home() {
 
       {/* ===================== SIDEBAR ESCRITORIO ===================== */}
 
-      <aside className="fixed left-0 top-0 z-50 hidden h-screen w-64 flex-col overflow-y-auto border-r border-[var(--border)] bg-[var(--surface)] px-7 py-8 md:flex">
-        <div className="flex items-center gap-3">
-          <img
-            src="/profile.jpg"
-            alt=""
-            className="h-11 w-11 rounded-full object-cover object-top"
-          />
-          <div>
-            <p className="text-sm font-semibold leading-tight">
-              Elías Niriel López
-            </p>
-            <p className="text-xs text-[var(--muted)]">
-              Desarrollador de Software
-            </p>
+      <aside
+        className={`sidebar fixed left-0 top-0 z-50 hidden h-screen flex-col overflow-y-auto overflow-x-hidden py-6 transition-[width] duration-300 md:flex ${
+          collapsed ? "w-[4.5rem] px-3" : "w-64 px-5"
+        }`}
+      >
+        <div className={`flex items-center ${collapsed ? "flex-col gap-4" : "justify-between"}`}>
+          <div className="flex items-center gap-3">
+            <img
+              src="/profile.jpg"
+              alt=""
+              className="h-11 w-11 shrink-0 rounded-full object-cover object-top ring-2 ring-[var(--gold)]"
+            />
+            {!collapsed && (
+              <div className="whitespace-nowrap">
+                <p className="text-sm font-semibold leading-tight text-white">
+                  Elías Niriel López
+                </p>
+                <p className="text-xs text-[var(--side-muted)]">
+                  Desarrollador de Software
+                </p>
+              </div>
+            )}
           </div>
+
+          <button
+            onClick={() => setCollapsed(!collapsed)}
+            aria-label={collapsed ? "Abrir menú lateral" : "Cerrar menú lateral"}
+            title={collapsed ? "Abrir menú" : "Cerrar menú"}
+            className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md text-[var(--side-muted)] transition-colors hover:bg-white/10 hover:text-white"
+          >
+            <Icon name="panel" />
+          </button>
         </div>
 
-        <nav className="mt-12 flex flex-col gap-1">
+        <nav className="mt-10 flex flex-col gap-1">
           {menu.map((item) => (
             <a
               key={item.href}
               href={item.href}
-              className="rounded-md px-3 py-2 text-sm text-[var(--muted)] transition-colors hover:bg-[var(--surface-alt)] hover:text-[var(--text)]"
+              title={collapsed ? item.name : undefined}
+              className={`flex items-center gap-3 rounded-md py-2 text-sm text-[var(--side-muted)] transition-colors hover:bg-white/10 hover:text-white ${
+                collapsed ? "justify-center px-0" : "px-3"
+              }`}
             >
-              {item.name}
+              <Icon name={item.icon} className="h-[18px] w-[18px] shrink-0" />
+              {!collapsed && <span className="whitespace-nowrap">{item.name}</span>}
             </a>
           ))}
         </nav>
@@ -369,21 +428,28 @@ export default function Home() {
         <div className="mt-auto">
           <button
             onClick={toggleTheme}
-            className="mb-6 flex w-full items-center gap-3 rounded-md border border-[var(--border)] px-3 py-2 text-sm text-[var(--muted)] transition-colors hover:text-[var(--text)]"
+            title={darkMode ? "Modo claro" : "Modo oscuro"}
+            className={`mb-5 flex w-full items-center gap-3 rounded-md border border-white/15 py-2 text-sm text-[var(--side-muted)] transition-colors hover:bg-white/10 hover:text-white ${
+              collapsed ? "justify-center px-0" : "px-3"
+            }`}
           >
-            <span>{darkMode ? "☼" : "☾"}</span>
-            {darkMode ? "Modo claro" : "Modo oscuro"}
+            <Icon name={darkMode ? "sun" : "moon"} />
+            {!collapsed && (darkMode ? "Modo claro" : "Modo oscuro")}
           </button>
 
-          <div className="flex gap-4 border-t border-[var(--border)] pt-5 text-xs text-[var(--muted)]">
-            <a href={GITHUB_URL} target="_blank" rel="noreferrer" className="hover:text-[var(--accent)]">
-              GitHub
+          <div
+            className={`flex border-t border-white/15 pt-5 text-[var(--side-muted)] ${
+              collapsed ? "flex-col items-center gap-4" : "gap-4"
+            }`}
+          >
+            <a href={GITHUB_URL} target="_blank" rel="noreferrer" title="GitHub" className="hover:text-white">
+              <Icon name="github" className="h-5 w-5" />
             </a>
-            <a href={LINKEDIN_URL} target="_blank" rel="noreferrer" className="hover:text-[var(--accent)]">
-              LinkedIn
+            <a href={LINKEDIN_URL} target="_blank" rel="noreferrer" title="LinkedIn" className="hover:text-white">
+              <Icon name="linkedin" className="h-5 w-5" />
             </a>
-            <a href={`mailto:${EMAIL}`} className="hover:text-[var(--accent)]">
-              Correo
+            <a href={`mailto:${EMAIL}`} title="Correo" className="hover:text-white">
+              <Icon name="mail" className="h-5 w-5" />
             </a>
           </div>
         </div>
@@ -391,18 +457,22 @@ export default function Home() {
 
       {/* ===================== CONTENIDO ===================== */}
 
-      <div className="pt-14 md:ml-64 md:pt-0">
+      <div
+        className={`pt-14 transition-[margin] duration-300 md:pt-0 ${
+          collapsed ? "md:ml-[4.5rem]" : "md:ml-64"
+        }`}
+      >
         {/* ---------- INICIO ---------- */}
 
         <section
           id="inicio"
-          className="flex min-h-[calc(100vh-3.5rem)] items-center px-6 py-16 sm:px-10 md:min-h-screen md:px-14 lg:px-16 xl:px-20"
+          className="hero-bg relative flex min-h-[calc(100vh-3.5rem)] items-center px-6 py-16 sm:px-10 md:min-h-screen md:px-14 lg:px-16 xl:px-20"
         >
           <div className="mx-auto grid w-full max-w-6xl items-center gap-12 lg:grid-cols-[1.2fr_0.8fr]">
             <div className="fade-in order-2 lg:order-1">
-              <p className="inline-flex items-center gap-2 rounded-full border border-[var(--border)] bg-[var(--surface)] px-3 py-1 text-xs text-[var(--muted)]">
-                <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
-                Disponible · El Salvador · Presencial / Remoto
+              <p className="section-label flex items-center gap-3">
+                <span className="h-0.5 w-8 rounded-full bg-[var(--gold)]" />
+                Portafolio
               </p>
 
               <h1 className="mt-6 text-4xl font-semibold leading-[1.1] tracking-tight sm:text-5xl lg:text-6xl">
@@ -416,11 +486,14 @@ export default function Home() {
               </p>
 
               <p className="mt-6 max-w-xl text-base leading-7 text-[var(--muted)]">
-                Egresado del Bachillerato Técnico en Desarrollo de
-                Software. Desarrollo APIs REST, aplicaciones web y
-                móviles, y soluciones con inteligencia artificial,
-                como Togo y LESSAI, proyectos ganadores en CIMAT y
-                Eureka 2026.
+                Egresado del Bachillerato Técnico Vocacional en
+                Desarrollo de Software del{" "}
+                <span className="font-medium text-[var(--text)]">
+                  Colegio Español Padre Arrupe
+                </span>
+                . Desarrollo APIs REST, aplicaciones web y móviles, y
+                soluciones con inteligencia artificial, como Togo y
+                LESSAI, proyectos ganadores en CIMAT y Eureka 2026.
               </p>
 
               <div className="mt-8 flex flex-wrap gap-3">
@@ -440,25 +513,30 @@ export default function Home() {
                 </a>
               </div>
 
-              <div className="mt-10 grid max-w-lg grid-cols-3 gap-4 border-t border-[var(--border)] pt-6">
-                {highlights.map((item) => (
-                  <div key={item.label}>
-                    <p className="text-2xl font-semibold">{item.value}</p>
-                    <p className="mt-1 text-xs leading-5 text-[var(--muted)]">
-                      {item.label}
-                    </p>
-                  </div>
-                ))}
+              <div className="mt-8 flex items-center gap-5 text-[var(--muted)]">
+                <a href={GITHUB_URL} target="_blank" rel="noreferrer" aria-label="GitHub" className="transition-colors hover:text-[var(--accent)]">
+                  <Icon name="github" className="h-5 w-5" />
+                </a>
+                <a href={LINKEDIN_URL} target="_blank" rel="noreferrer" aria-label="LinkedIn" className="transition-colors hover:text-[var(--accent)]">
+                  <Icon name="linkedin" className="h-5 w-5" />
+                </a>
+                <a href={`mailto:${EMAIL}`} aria-label="Correo" className="transition-colors hover:text-[var(--accent)]">
+                  <Icon name="mail" className="h-5 w-5" />
+                </a>
               </div>
             </div>
 
             <div className="fade-in-delay order-1 flex justify-center lg:order-2 lg:justify-end">
-              <div className="w-56 overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--surface)] shadow-xl shadow-black/5 sm:w-72 lg:w-80">
-                <img
-                  src="/profile.jpg"
-                  alt="Elías Niriel López Casoverde"
-                  className="aspect-[4/5] w-full object-cover object-top"
-                />
+              <div className="relative w-56 sm:w-72 lg:w-80">
+                {/* Bloque de color detrás de la foto */}
+                <div className="absolute -bottom-4 -right-4 h-full w-full rounded-2xl bg-[var(--accent)]" />
+                <div className="relative overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--surface)] shadow-xl shadow-black/10">
+                  <img
+                    src="/profile.jpg"
+                    alt="Elías Niriel López Casoverde"
+                    className="aspect-[4/5] w-full object-cover object-top"
+                  />
+                </div>
               </div>
             </div>
           </div>
@@ -572,11 +650,14 @@ export default function Home() {
               {projects.map((project) => (
                 <article
                   key={project.title}
-                  className="flex flex-col rounded-xl border border-[var(--border)] bg-[var(--surface)] p-7 transition-shadow duration-300 hover:shadow-lg hover:shadow-black/5"
+                  className={`project-card relative flex flex-col overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--surface)] p-7 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:shadow-black/5 ${
+                    project.badge ? "is-winner" : ""
+                  }`}
                 >
                   <div className="flex flex-wrap items-center gap-2">
                     {project.badge && (
-                      <span className="rounded-full bg-[var(--accent-soft)] px-2.5 py-0.5 text-xs font-medium text-[var(--accent)]">
+                      <span className="inline-flex items-center gap-1.5 rounded-full bg-[var(--gold-soft)] px-2.5 py-0.5 text-xs font-medium text-[var(--gold-text)]">
+                        <Icon name="trophy" className="h-3.5 w-3.5" />
                         {project.badge}
                       </span>
                     )}
@@ -609,6 +690,39 @@ export default function Home() {
                   </div>
                 </article>
               ))}
+
+              {/* Tarjeta extra: el resto de proyectos está en GitHub */}
+              <a
+                href={GITHUB_URL}
+                target="_blank"
+                rel="noreferrer"
+                className="group relative flex flex-col justify-between overflow-hidden rounded-xl bg-[var(--accent)] p-7 text-[var(--on-accent)] transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:shadow-black/10"
+              >
+                <Icon
+                  name="github"
+                  className="pointer-events-none absolute -bottom-8 -right-8 h-44 w-44 opacity-10"
+                />
+                <div>
+                  <p className="text-xs font-medium uppercase tracking-wider opacity-70">
+                    Y muchos más
+                  </p>
+                  <h3 className="mt-4 text-2xl font-semibold tracking-tight">
+                    Más proyectos en GitHub
+                  </h3>
+                  <p className="mt-4 max-w-sm text-sm leading-6 opacity-80">
+                    Estos son solo los más representativos. En mi GitHub
+                    puedes revisar prácticas, proyectos académicos y
+                    experimentos con distintas tecnologías.
+                  </p>
+                </div>
+                <span className="mt-8 inline-flex items-center gap-2 text-sm font-medium">
+                  github.com/NirielC
+                  <Icon
+                    name="arrow"
+                    className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1"
+                  />
+                </span>
+              </a>
             </div>
           </div>
         </section>
@@ -712,35 +826,45 @@ export default function Home() {
 
         <section id="contacto" className={sectionClass}>
           <div className="mx-auto max-w-6xl">
-            <SectionHeader
-              label="Contacto"
-              title="¿Trabajamos juntos?"
-              description="Estoy buscando oportunidades para seguir creciendo como desarrollador. Escríbeme y con gusto te respondo."
-            />
-
-            <div className="flex flex-wrap gap-3">
-              <a
-                href={`mailto:${EMAIL}`}
-                className="rounded-md bg-[var(--accent)] px-5 py-2.5 text-sm font-medium text-[var(--on-accent)] transition-colors hover:bg-[var(--accent-hover)]"
-              >
-                {EMAIL}
-              </a>
-              <a
-                href={LINKEDIN_URL}
-                target="_blank"
-                rel="noreferrer"
-                className="rounded-md border border-[var(--border)] bg-[var(--surface)] px-5 py-2.5 text-sm font-medium transition-colors hover:border-[var(--accent)] hover:text-[var(--accent)]"
-              >
-                LinkedIn
-              </a>
-              <a
-                href={GITHUB_URL}
-                target="_blank"
-                rel="noreferrer"
-                className="rounded-md border border-[var(--border)] bg-[var(--surface)] px-5 py-2.5 text-sm font-medium transition-colors hover:border-[var(--accent)] hover:text-[var(--accent)]"
-              >
-                GitHub
-              </a>
+            <div className="contact-band relative overflow-hidden rounded-2xl px-8 py-12 text-white md:px-12 md:py-16">
+              <p className="section-label flex items-center gap-3 !text-[var(--gold)]">
+                <span className="h-0.5 w-8 rounded-full bg-[var(--gold)]" />
+                Contacto
+              </p>
+              <h2 className="mt-3 text-3xl font-semibold tracking-tight md:text-4xl">
+                ¿Trabajamos juntos?
+              </h2>
+              <p className="mt-4 max-w-xl text-base leading-7 text-white/75">
+                Estoy buscando oportunidades para seguir creciendo como
+                desarrollador. Escríbeme y con gusto te respondo.
+              </p>
+              <div className="mt-8 flex flex-wrap gap-3">
+                <a
+                  href={`mailto:${EMAIL}`}
+                  className="inline-flex items-center gap-2 rounded-md bg-white px-5 py-2.5 text-sm font-medium text-[#1f3864] transition-colors hover:bg-white/90"
+                >
+                  <Icon name="mail" />
+                  {EMAIL}
+                </a>
+                <a
+                  href={LINKEDIN_URL}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="inline-flex items-center gap-2 rounded-md border border-white/30 px-5 py-2.5 text-sm font-medium transition-colors hover:bg-white/10"
+                >
+                  <Icon name="linkedin" />
+                  LinkedIn
+                </a>
+                <a
+                  href={GITHUB_URL}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="inline-flex items-center gap-2 rounded-md border border-white/30 px-5 py-2.5 text-sm font-medium transition-colors hover:bg-white/10"
+                >
+                  <Icon name="github" />
+                  GitHub
+                </a>
+              </div>
             </div>
 
             <footer className="mt-20 flex flex-col justify-between gap-3 border-t border-[var(--border)] pt-6 text-xs text-[var(--subtle)] sm:flex-row">
